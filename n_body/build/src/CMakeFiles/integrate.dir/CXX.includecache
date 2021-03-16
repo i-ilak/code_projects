@@ -1,0 +1,26 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/sito/Documents/code_projects/n_body/src/integrate.cpp
+integrate.hpp
+/home/sito/Documents/code_projects/n_body/src/integrate.hpp
+
+/home/sito/Documents/code_projects/n_body/src/integrate.hpp
+string
+-
+eigen3/Eigen/Dense
+-
+utility
+-
+iostream
+-
+cmath
+-
+fstream
+-
+

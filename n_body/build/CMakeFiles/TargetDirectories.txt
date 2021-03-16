@@ -1,0 +1,6 @@
+/home/sito/Documents/code_projects/n_body/build/CMakeFiles/rebuild_cache.dir
+/home/sito/Documents/code_projects/n_body/build/CMakeFiles/edit_cache.dir
+/home/sito/Documents/code_projects/n_body/build/CMakeFiles/main.dir
+/home/sito/Documents/code_projects/n_body/build/src/CMakeFiles/rebuild_cache.dir
+/home/sito/Documents/code_projects/n_body/build/src/CMakeFiles/edit_cache.dir
+/home/sito/Documents/code_projects/n_body/build/src/CMakeFiles/integrate.dir
