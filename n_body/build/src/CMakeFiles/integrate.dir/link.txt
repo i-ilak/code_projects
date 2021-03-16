@@ -1,2 +1,0 @@
-/usr/bin/ar qc libintegrate.a CMakeFiles/integrate.dir/integrate.cpp.o
-/usr/bin/ranlib libintegrate.a
