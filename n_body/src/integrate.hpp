@@ -25,17 +25,17 @@ using rhs_t = phase_t (*)(double const &, phase_t const &);
 using step_t = phase_t (*)(rhs_t , phase_t const &, double, double); // redundant an can probably be eliminated 
 
 /*
- The following are two, well-known solution schemes for ODE's. For both the
- following is true.
- PRE:
-    rhs_t f:            characterizes the ODE. 
-    phase_t const z0:   initial conditions of the problem in form of phase-space
-                        coordinates.
-    double const T:     time interval you want to simulate, i.e. has to be a
-                        positive real number.
-    unsigned const N:   number of individual steps you want to take in simulation.
-                        The bigger N is the more precise the result will be and  
-                        the longer the computation will take. 
+ * The following are two, well-known solution schemes for ODE's. For both the
+ * following is true.
+ * PRE:
+ *  - f:    characterizes the ODE. 
+ *  - z0:   initial conditions of the problem in form of phase-space
+ *          coordinates.
+ *  - T:    time interval you want to simulate, i.e. has to be a
+ *          positive real number.
+ *  - N:    number of individual steps you want to take in simulation.
+ *          The bigger N is the more precise the result will be and  
+ *          the longer the computation will take. 
  */
 Eigen::MatrixXd explicit_euler(rhs_t, phase_t const &, double const &, unsigned const &);
 Eigen::MatrixXd explicit_midpoint(rhs_t, phase_t const &, double const &, unsigned const &);
