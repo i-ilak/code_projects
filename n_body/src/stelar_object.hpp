@@ -20,6 +20,7 @@ class StellarObject{
         vector_t get_position() const {return position_;}
         vector_t get_velocity() const {return velocity_;}
         double get_mass() const {return mass_;}
+        name_t get_name() const {return name_;}
     private:
         vector_t position_;
         vector_t velocity_;

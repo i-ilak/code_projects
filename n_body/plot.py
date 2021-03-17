@@ -2,11 +2,16 @@ import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.animation
+from matplotlib.ticker import (AutoMinorLocator, MultipleLocator)
 
+# We want to plot the generated data form data.txt.
 
-file = np.array(open("data.txt").read().split(), dtype=float)
-N = int(file[0])
-file = file[1:]
+file = np.array(open("data.txt").read().split())
+N = int(file[0])    # the first line only contains the number of stellar objects that we simulated.
+names = file[1].split(",")
+file = np.array(file[2:], dtype=float)
+
+# We then reshape the file to get into the form we are used. 
 file = file.reshape((int(len(file)/(6*N+1)), (6*N+1)))
 
 time = file[:,-1]
@@ -26,27 +31,45 @@ planets = np.array(planets)
 
 fig = plt.figure()
 ax = plt.axes(projection='3d')
-title = ax.set_title("TEST")
+title = ax.set_title("September 5th, 1994 at 00:00h\n + 0 d")
+
+# Change major ticks to show every 20.
+ax.xaxis.set_major_locator(MultipleLocator(20))
+ax.yaxis.set_major_locator(MultipleLocator(20))
+
+# Change minor ticks to show every 5. (20/4 = 5)
+ax.xaxis.set_minor_locator(AutoMinorLocator(4))
+ax.yaxis.set_minor_locator(AutoMinorLocator(4))
+
+# Turn grid on for both major and minor ticks and style minor slightly
+# differently.
+ax.grid(which='major', color='#CCCCCC', linestyle='--')
+ax.grid(which='minor', color='#CCCCCC', linestyle=':')
 
 def update_curves(num):
-    num *=10
+    num *=100
     if num > len(planets[0][0]):
-        ani.event_source.stop()
+        # Freeze animation at last frame 
+        num = len(planets[0][0])-1
 
-    for line, planet in zip(lines2d,planets):
+    for line, planet in zip(lines2d, planets):
         line.set_data(planet[0, :num], planet[1, :num])
         line.set_3d_properties(planet[2, :num])
-    ax.view_init(elev=3, azim=360+(num/100)%(num/100+1))
-    title.set_text('{}'.format(time[num]))
+    ax.view_init(elev=20, azim=100)
+    ax.dist=10
+    title.set_text('September 5th, 1994 at 00:00h\n + {}y {}d'.format(int(time[num]/365),int(time[num]%365)))
     return title, lines2d
 
-lines2d = [ax.plot(planet[0,:1], planet[1,:1], planet[2,:1], linestyle="--")[0] for planet in planets]
+lines2d = [ax.plot(planet[0,:-1], planet[1,:-1], planet[2,:-1], linestyle="dashdot", label=name)[0] for planet,name in zip(planets,names)]
 
 ani = matplotlib.animation.FuncAnimation(fig, update_curves, frames=3000, interval=60, blit=False, save_count=200)
 ax.set_xlim(ax.get_xlim())
 ax.set_ylim(ax.get_ylim())
 ax.set_zlim(ax.get_zlim())
-ax.axis('off')
-plt.tight_layout()
+ax.set_xlabel("[A.U.]")
+ax.set_ylabel("[A.U.]")
+ax.set_zlabel("[A.U.]")
+plt.legend(loc="best")
+#plt.tight_layout()
 #ani.save("try_animation.mp4", fps=60)
 plt.show()
