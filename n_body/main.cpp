@@ -76,10 +76,11 @@ int main(){
     StellarObject Sun(qSun,vSun,mSun, "Sun");
     StellarObject Jupiter(qj,vj, mj, "Jupiter");
     StellarObject Saturn(qs,vs, ms, "Saturn");
+    StellarObject Uranus(qu,vu, mu, "Uranus");
     StellarObject Neptun(qn,vn, mn, "Neptun");
     StellarObject Pluto(qp,vp, mp, "Pluto");
 
-    std::vector<StellarObject> planets = {Sun, Jupiter, Saturn, Neptun, Pluto};
+    std::vector<StellarObject> planets = {Sun, Jupiter, Saturn, Uranus, Neptun, Pluto};
     double const G = 2.95912208286e-4;
     int const N = 40000;
     double const T=60000;
