@@ -74,7 +74,6 @@ Eigen::MatrixXd explicit_midpoint(rhs_t rhs, phase_t const &z0, double const & T
         z.row(i + 1) = z.row(i);
         z.row(i + 1) += tmp2;
     }
-
     z.conservativeResize(Eigen::NoChange, z.cols()+1);
     z.col(z.cols()-1) = t;
     return z;

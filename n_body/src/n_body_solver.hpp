@@ -120,13 +120,17 @@ static std::vector<double> masses;
  *                  we do not know in which unit system the user works. (usually
  *                  determined by the way how he chooses to represent the masses of 
  *                  planets.)
+ *  - method:       is either 1 or 2. 
+ *                   - 1: stands for Explicit Euler
+ *                   - 2: stands for Explicit midpoint
  * POST:
  *  - Eigen::MatrixXd, where row k contains the phase space coordinates at time k*T/N,
  *    of all the planets. Elements of 3*u to 3*u+6 are the coordinates of u-th object. 
  */
 Eigen::MatrixXd n_body_solver(std::vector<StellarObject> const & planets, 
                               double const & T, int const & bins,
-                              double const & gravitational_constant){
+                              double const & gravitational_constant,
+                              int const & method){
     int const N = planets.size();
     phase_t z0(6*N);
     for(std::size_t k=0; k < N; ++k) {
@@ -140,7 +144,8 @@ Eigen::MatrixXd n_body_solver(std::vector<StellarObject> const & planets,
     }
     G = gravitational_constant;
     auto reduced_rhs = [](double const & t, phase_t const & z0) {return nbody_rhs(z0, masses, G);};
-    return explicit_midpoint(reduced_rhs, z0, T, bins);
+    auto solver = method == 1 ? explicit_euler : explicit_midpoint;
+    return solver(reduced_rhs, z0, T, bins);
 }
 
 #endif //N_BODY_HPP

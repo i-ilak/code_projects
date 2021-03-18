@@ -4,6 +4,9 @@ from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.animation
 from matplotlib.ticker import (AutoMinorLocator, MultipleLocator)
 
+import matplotlib as mpl
+plt.rcParams.update({"font.family": "monospace"})
+
 # We want to plot the generated data form data.txt.
 
 file = np.array(open("data.txt").read().split())
@@ -47,7 +50,7 @@ ax.grid(which='major', color='#CCCCCC', linestyle='--')
 ax.grid(which='minor', color='#CCCCCC', linestyle=':')
 
 def update_curves(num):
-    num *=100
+    num *=500
     if num > len(planets[0][0]):
         # Freeze animation at last frame 
         num = len(planets[0][0])-1
@@ -57,7 +60,7 @@ def update_curves(num):
         line.set_3d_properties(planet[2, :num])
     ax.view_init(elev=20, azim=100)
     ax.dist=10
-    title.set_text('September 5th, 1994 at 00:00h\n + {}y {}d'.format(int(time[num]/365),int(time[num]%365)))
+    title.set_text('September 5th, 1994 at 00:00h\n + {:3}y {:3}d'.format(int(time[num]/365),int(time[num]%365)))
     return title, lines2d
 
 lines2d = [ax.plot(planet[0,:-1], planet[1,:-1], planet[2,:-1], linestyle="dashdot", label=name)[0] for planet,name in zip(planets,names)]
