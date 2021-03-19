@@ -78,3 +78,18 @@ Eigen::MatrixXd explicit_midpoint(rhs_t rhs, phase_t const &z0, double const & T
     z.col(z.cols()-1) = t;
     return z;
 }
+
+/*
+Eigen::MatrixXd velocity_verlet(rhs_t rhs, phase_t const &z0, double const & T, unsigned const & N){
+    Eigen::MatrixXd z(N+1, z0.size());
+    z.fill(0);
+    double const t0 = 0;
+    double const dt =T/N;
+    z.row(0) = z0;
+    phase_t t(N+1);
+    for(std::size_t k = 0; k<t.size(); ++k){
+        t(k) = (k+1) * dt;
+    }
+
+}
+*/
