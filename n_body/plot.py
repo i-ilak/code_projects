@@ -7,72 +7,91 @@ from matplotlib.ticker import (AutoMinorLocator, MultipleLocator)
 import matplotlib as mpl
 plt.rcParams.update({"font.family": "monospace"})
 
-# We want to plot the generated data form data.txt.
 
-file = np.array(open("data.txt").read().split())
-N = int(file[0])    # the first line only contains the number of stellar objects that we simulated.
-names = file[1].split(",")
-file = np.array(file[2:], dtype=float)
 
-# We then reshape the file to get into the form we are used. 
-file = file.reshape((int(len(file)/(6*N+1)), (6*N+1)))
 
-time = file[:,-1]
+def make_plot(axis, data_file_name):
+    # We want to plot the generated data form data_ee.txt and data_em.txt.
+    file = np.array(open(data_file_name).read().split())
+    N = int(file[0])    # the first line only contains the number of stellar objects that we simulated.
+    names = file[1].split(",")
+    file = np.array(file[2:], dtype=float)
 
-planets = []
+    # We then reshape the file to get into the form we are used. 
+    file = file.reshape((int(len(file)/(6*N+1)), (6*N+1)))
 
-for k in range(N):
-    planet = []
-    x = file[:, 3*k]
-    y = file[:, 3*k+1]
-    z = file[:, 3*k+2]
-    planet.append(x)
-    planet.append(y)
-    planet.append(z)
-    planets.append(planet)
-planets = np.array(planets)
+    time = file[:,-1]
 
-fig = plt.figure()
-ax = plt.axes(projection='3d')
-title = ax.set_title("September 5th, 1994 at 00:00h\n + 0 d")
+    planets = []
 
-# Change major ticks to show every 20.
-ax.xaxis.set_major_locator(MultipleLocator(20))
-ax.yaxis.set_major_locator(MultipleLocator(20))
+    for k in range(N):
+        planet = []
+        x = file[:, 3*k]
+        y = file[:, 3*k+1]
+        z = file[:, 3*k+2]
+        planet.append(x)
+        planet.append(y)
+        planet.append(z)
+        planets.append(planet)
+    planets = np.array(planets)
 
-# Change minor ticks to show every 5. (20/4 = 5)
-ax.xaxis.set_minor_locator(AutoMinorLocator(4))
-ax.yaxis.set_minor_locator(AutoMinorLocator(4))
+    if data_file_name[-6:-4]=="ee":
+        axis.set_title("Explicit Euler")
+    else:
+        axis.set_title("Explicit Midpoint")
 
-# Turn grid on for both major and minor ticks and style minor slightly
-# differently.
-ax.grid(which='major', color='#CCCCCC', linestyle='--')
-ax.grid(which='minor', color='#CCCCCC', linestyle=':')
+    # Change major ticks to show every 20.
+    axis.xaxis.set_major_locator(MultipleLocator(20))
+    axis.yaxis.set_major_locator(MultipleLocator(20))
 
-def update_curves(num):
-    num *=500
-    if num > len(planets[0][0]):
-        # Freeze animation at last frame 
-        num = len(planets[0][0])-1
+    # Change minor ticks to show every 5. (20/4 = 5)
+    axis.xaxis.set_minor_locator(AutoMinorLocator(4))
+    axis.yaxis.set_minor_locator(AutoMinorLocator(4))
 
-    for line, planet in zip(lines2d, planets):
-        line.set_data(planet[0, :num], planet[1, :num])
-        line.set_3d_properties(planet[2, :num])
-    ax.view_init(elev=20, azim=100)
-    ax.dist=10
-    title.set_text('September 5th, 1994 at 00:00h\n + {:3}y {:3}d'.format(int(time[num]/365),int(time[num]%365)))
-    return title, lines2d
+    # Turn grid on for both major and minor ticks and style minor slightly
+    # differently.
+    axis.grid(which='major', color='#CCCCCC', linestyle='--')
+    axis.grid(which='minor', color='#CCCCCC', linestyle=':')
 
-lines2d = [ax.plot(planet[0,:-1], planet[1,:-1], planet[2,:-1], linestyle="dashdot", label=name)[0] for planet,name in zip(planets,names)]
+    lines2d = [axis.plot(planet[0,:-1], planet[1,:-1], planet[2,:-1], 
+                linestyle="dashdot", label=name)[0] for planet,name in zip(planets,names)]
 
-ani = matplotlib.animation.FuncAnimation(fig, update_curves, frames=3000, interval=60, blit=False, save_count=200)
-ax.set_xlim(ax.get_xlim())
-ax.set_ylim(ax.get_ylim())
-ax.set_zlim(ax.get_zlim())
-ax.set_xlabel("[A.U.]")
-ax.set_ylabel("[A.U.]")
-ax.set_zlabel("[A.U.]")
-plt.legend(loc="best")
-#plt.tight_layout()
-#ani.save("try_animation.mp4", fps=60)
-plt.show()
+    return lines2d, planets, time
+
+if __name__ == "__main__":
+    fig = plt.figure()
+    ax1 = fig.add_subplot(1, 2, 1, projection='3d')
+    ax2 = fig.add_subplot(1, 2, 2, projection='3d')
+
+    line_ee, planets_ee, time_ee = make_plot(ax1, "data_ee.txt")
+    line_em, planets_em, time_em = make_plot(ax2, "data_em.txt")
+    lines = [line_ee, line_em]
+    planets_ = [planets_ee, planets_em]
+    time_ = [time_ee, time_em]
+
+    def update_curves(num):
+        num *=500
+        for line, planets, time in zip(lines, planets_, time_):
+            if num > len(planets[0][0]):
+                # Freeze animation at last frame 
+                num = len(planets[0][0])-1
+
+            for line, planet in zip(line, planets):
+                line.set_data(planet[0, :num], planet[1, :num])
+                line.set_3d_properties(planet[2, :num])
+        fig.suptitle('September 5th, 1994 at 00:00h\n + {:3}y {:3}d'.format(int(time[num]/365),int(time[num]%365)), y=0.8)
+        return lines,
+
+    ani = matplotlib.animation.FuncAnimation(fig, update_curves, frames=3000, interval=60, blit=False, save_count=200)
+    for axis in [ax1, ax2]:
+        axis.view_init(elev=20, azim=100)
+        axis.dist=10
+        axis.set_xlim(axis.get_xlim())
+        axis.set_ylim(axis.get_ylim())
+        axis.set_zlim(axis.get_zlim())
+        axis.set_xlabel("[A.U.]")
+        axis.set_ylabel("[A.U.]")
+        axis.set_zlabel("[A.U.]")
+        #axis.legend(loc="best")
+    ax1.legend(loc=(0.15,-0.4), ncol=6)
+    plt.show()
