@@ -9,7 +9,7 @@
 #include <fstream>
 
 /*
- Define some useful types. All the names are related to physicsl quantities and
+ Define some useful types. All the names are related to physical quantities and
  should be interpreted in this context. 
  */
 using mass_t = double const;
@@ -22,7 +22,8 @@ using phase_t = Eigen::VectorXd;    // type used for elements of "phase space"
 // called time) and z an element of the phase space, then rhs_t is the type of
 // f. 
 using rhs_t = phase_t (*)(double const &, phase_t const &);
-using step_t = phase_t (*)(rhs_t , phase_t const &, double, double); // redundant an can probably be eliminated 
+using step_t = phase_t (*)(rhs_t , phase_t const &, double, double);
+using integration_t = Eigen::MatrixXd (*)(rhs_t , phase_t const &, double const &, unsigned const &);
 
 /*
  * The following are two, well-known solution schemes for ODE's. For both the
@@ -39,5 +40,6 @@ using step_t = phase_t (*)(rhs_t , phase_t const &, double, double); // redundan
  */
 Eigen::MatrixXd explicit_euler(rhs_t, phase_t const &, double const &, unsigned const &);
 Eigen::MatrixXd explicit_midpoint(rhs_t, phase_t const &, double const &, unsigned const &);
+Eigen::MatrixXd velocity_verlet(rhs_t, phase_t const &, double const &, unsigned const &);
 
 #endif // INTEGRATE_HPP

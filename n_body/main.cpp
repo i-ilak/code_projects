@@ -13,7 +13,19 @@
 void perform_simulation(std::vector<StellarObject> const & objects,
                         double const & T, int const & N, double const & G,
                         int const & method){
-    std::string name = method==1 ? "_ee" : "_em";
+    std::string name;
+    switch (method)
+    {
+    case 1:
+        name = "_ee";
+        break;
+    case 2:
+        name = "_em";
+        break;
+    case 3:
+        name = "_vv";
+        break;
+    }
     // Running the calculation and timing it
     auto start = std::chrono::high_resolution_clock::now();
     auto res = n_body_solver(objects, T, N, G, method);
@@ -48,6 +60,6 @@ int main(){
     double const T = 200000;
 
     // Explicit Midpoint version
-    perform_simulation(objects, T, N, G, 2);
+    perform_simulation(objects, T, N, G, 3);
 
 }

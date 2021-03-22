@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.animation
 from matplotlib.ticker import (AutoMinorLocator, MultipleLocator)
+import matplotlib.gridspec as gridspec
 
 # Set font to monospace since animation looks better this way
 plt.rcParams.update({"font.family": "monospace"})
@@ -42,6 +43,8 @@ def make_plot(axis, data_file_name):
     # Setting title and other cosmetic parameters for plot
     if data_file_name[-6:-4]=="ee":
         axis.set_title("Explicit Euler")
+    elif data_file_name[-6:-4]=="vv":
+        axis.set_title("Velocity Verlet")
     else:
         axis.set_title("Explicit Midpoint")
 
@@ -67,20 +70,25 @@ def make_plot(axis, data_file_name):
 if __name__ == "__main__":
     # Set up environment for plot
     fig = plt.figure()
-    ax1 = fig.add_subplot(1, 2, 1, projection='3d')
-    ax2 = fig.add_subplot(1, 2, 2, projection='3d')
+    gs = gridspec.GridSpec(2, 4)
+    gs.update(wspace=0.5)
+    ax1 = fig.add_subplot(gs[0, :2], projection='3d')
+    ax2 = fig.add_subplot(gs[0, 2:], projection='3d')
+    ax3 = fig.add_subplot(gs[1, 1:3], projection='3d')
 
     # Get data for plot. Note that the subscript stands for the different 
     # integration schemes:
     #   ee: Explicit Euler
     #   em: Explicit Midpoint
+    #   vv: Velocity Verlet
     line_ee, planets_ee, time_ee = make_plot(ax1, "data_ee.txt")
     line_em, planets_em, time_em = make_plot(ax2, "data_em.txt")
+    line_vv, planets_vv, time_vv = make_plot(ax3, "data_vv.txt")
 
     # A line in this context is the data that we hand pythons animation function later
-    lines = [line_ee, line_em]
-    spatial_data_container_list = [planets_ee, planets_em]
-    time_container = [time_ee, time_em]
+    lines = [line_ee, line_em, line_vv]
+    spatial_data_container_list = [planets_ee, planets_em, planets_vv]
+    time_container = [time_ee, time_em, time_vv]
 
     def update_curves(num):
         num *=500
@@ -92,11 +100,11 @@ if __name__ == "__main__":
             for line, planet in zip(line, planets):
                 line.set_data(planet[0, :num], planet[1, :num])
                 line.set_3d_properties(planet[2, :num])
-        fig.suptitle('September 5th, 1994 at 00:00h\n + {:3}y {:3}d'.format(int(time[num]/365),int(time[num]%365)), y=0.8)
+        fig.suptitle('September 5th, 1994 at 00:00h\n + {:3}y {:3}d'.format(int(time[num]/365),int(time[num]%365)), y=0.95)
         return lines,
 
     ani = matplotlib.animation.FuncAnimation(fig, update_curves, frames=3000, interval=60, blit=False, save_count=200)
-    for axis in [ax1, ax2]:
+    for axis in [ax1, ax2, ax3]:
         axis.view_init(elev=20, azim=100)
         axis.dist=10
         axis.set_xlim(axis.get_xlim())
@@ -105,6 +113,5 @@ if __name__ == "__main__":
         axis.set_xlabel("[A.U.]")
         axis.set_ylabel("[A.U.]")
         axis.set_zlabel("[A.U.]")
-        #axis.legend(loc="best")
-    ax1.legend(loc=(0.15,-0.4), ncol=6)
+    ax1.legend(loc=(0.15,-1.4), ncol=6)
     plt.show()
