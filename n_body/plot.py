@@ -11,7 +11,7 @@ plt.rcParams.update({"font.family": "monospace"})
 
 def make_plot(axis, data_file_name):
     # We want to plot the generated data form data_ee.txt and data_em.txt.
-    file = np.array(open(data_file_name).read().split())
+    file = np.array(open("./data/" + data_file_name).read().split())
     # the first line only contains the number of stellar objects that we simulated.
     N = int(file[0])
     # Second line contains names of stellar objects, if they have useful names.

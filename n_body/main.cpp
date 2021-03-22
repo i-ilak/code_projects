@@ -34,7 +34,7 @@ void perform_simulation(std::vector<StellarObject> const & objects,
     std::cout << name.substr(1,name.size()-1) + " calculation took:\t" << diff.count() << " s" <<"\n";
 
     // Writing the data into a file for later plotting
-    std::string path= "data" + name + ".txt";
+    std::string path= "data/data" + name + ".txt";
     std::ofstream out(path);
 
     out << objects.size() << "\n";
