@@ -76,8 +76,12 @@ std::tuple<double,double,double,int,std::pair<double,double>> try_tstar_drag(
                                            std::vector<double> const & tstar_search_grid){
     auto t_grid = tstar_search_grid;
     t_grid.insert(t_grid.begin(), 0.0);
-    phase_t z0;
-    z0 << 0.0, y_star, v0*std::cos(theta), v0*std::sin(theta);
+    phase_t z0(4);
+    z0(0)=0.0;
+    z0(1)=y_star;
+    z0(2)=v0*std::cos(theta);
+    z0(3)=v0*std::sin(theta);
+    std::cout << "got to here" <<"\n";
     auto result = explicit_midpoint(rhs_with_drag, z0, tstar_search_grid.back(), tstar_search_grid.size());
     phase_t y_drag = result.col(1);
     phase_t x_drag = result.col(0);
@@ -166,18 +170,49 @@ std::tuple<double,double,double,bool> calc_x_star_with_drag_at_tstar(
 }
 
 std::tuple<double,double,bool,int> find_v0(double const & x_star, 
-                                           double const & v0_est, 
+                                           double v0_est, 
                                            double const & theta, 
                                            double const & y_star, 
-                                           double const & t_star_est,
+                                           double t_star_est,
                                            double const & eps_x=1.0e-3,
                                            double const & num_try=6){
     bool success = false;
     std::vector<double> v0_history;
     std::vector<double> x_star_history;
     int number_of_tries = 0;
-    for(std::size_t try_=0; try_<number_of_tries; try_++){
+    double x_drag;
+    double y_drag;
+    for(std::size_t try_=0; try_<num_try; try_++){
         auto tmp = calc_x_star_with_drag_at_tstar(v0_est, theta, y_star, t_star_est);
+        t_star_est = std::get<0>(tmp);
+        x_drag = std::get<1>(tmp);
+        y_drag = std::get<2>(tmp);
+        success = std::get<3>(tmp);
+        
+        v0_history.push_back(v0_est);
+        x_star_history.push_back(x_drag);
+        if(success==false){                             //<-------------- probably wrong
+            break;
+        }
+        if(std::abs(x_drag-x_star)<eps_x){
+            success=true;
+            number_of_tries=try_;
+        }
+        else{
+            if(v0_history.size()<2){
+                double dx = x_star - x_drag;
+                double dv0 = dx/(t_star_est*std::cos(theta));
+                v0_est += dv0;
+            }
+            else{
+                int const end_v = v0_history.size();
+                int const end_x = x_star_history.size();
+                v0_est  = v0_history[end_v-2] 
+                        + (v0_history[end_v-1]-v0_history[end_v-2])
+                        *(x_star-x_star_history[end_x-2])
+                        /(x_star_history[end_x-1]-x_star_history[end_x-2]);
+            }
+        }
     }
     return std::make_tuple(0,0,0,0);
 }
