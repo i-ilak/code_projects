@@ -6,3 +6,4 @@ Currently we have:
  - **Butter Problem**: does a toast fall on the butter side or not? A simulation written in the Wolfram Language (Mathematica) to determine if a piece of bread will land on the butter side or not. The final result is a a graph, tabel-height vs. initial-bread-speed, showing in which cases we have a good start into the day.
  - **n-Body**: a [N-Body](https://en.wikipedia.org/wiki/N-body_simulation) simulation written in C++ and animation done in Python. The animation generated shows the evolution of the Solar System from some day in Sep. 1994 for approximately 500 years into the future.
  - **Drag**: A simulation of The Rock jumping between two skyscrapers, inspired by [this picture](https://imgur.com/a/ruOwhXO). The code is mostly an adaptation in C++ of an answer given to a problem I had ([see here](https://stackoverflow.com/a/51345757/7746905)).
+
