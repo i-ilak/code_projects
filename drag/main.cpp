@@ -82,7 +82,7 @@ std::tuple<double,double,double,int,std::pair<double,double>> try_tstar_drag(
     phase_t y_drag = result.col(1);
     phase_t x_drag = result.col(0);
     int ierr=false;
-    unsigned t_star_index = 0
+    unsigned t_star_index = 0;
     std::pair<double,double> t_star_bracket;
     if(y_drag(0)<0.0){
     	ierr = -1;
@@ -90,7 +90,7 @@ std::tuple<double,double,double,int,std::pair<double,double>> try_tstar_drag(
     	t_star_bracket.first = 0;
     	t_star_bracket.second = 0;
     }
-    if(y_drag(end)>0.0){
+    if(y_drag(y_drag.size()-1)>0.0){
     	ierr = 1;
     	t_star_index = y_drag.size()-1;
     	t_star_bracket.first = 0;
@@ -106,7 +106,7 @@ std::tuple<double,double,double,int,std::pair<double,double>> try_tstar_drag(
     				t_star_index = i+1;
     			}
     			else{
-    				t_star_index = i
+    				t_star_index = i;
     			}
     		}
     	}
@@ -119,22 +119,21 @@ std::tuple<double,double,double,bool> calc_x_star_with_drag_at_tstar(
                                            double const & v0, 
                                            double const & theta, 
                                            double const & y_star, 
-                                           double const & t_star_est,
+                                           double t_star_est,
                                            double const eps_y=1.0e-3,
                                            int const & number_of_t_searches=20,
                                            double const & rel_range_lower=0.8,
                                            double const & rel_range_upper=1.2,
                                            int const & num_try=5){
     bool success = false;
-    double const t_star_est_lower=t_star_est*rel_range_lower;
-    double const t_star_est_upper=t_star_est*rel_range_upper;
+    double t_star_est_lower=t_star_est*rel_range_lower;
+    double t_star_est_upper=t_star_est*rel_range_upper;
     // Space to save results
     int ierr=false;
-    unsigned t_star_index = 0
+    unsigned t_star_index = 0;
     std::pair<double,double> t_star_bracket;
-    phase_t y_drag;
-    phase_t x_drag;
-    double t_star_est;
+    double y_drag;
+    double x_drag;
     for(std::size_t try_=0; try_<num_try; try_++){
         auto t_star_search_grid=linspace(t_star_est_lower,t_star_est_upper,number_of_t_searches);
         auto tmp = try_tstar_drag(v0,theta,y_star,t_star_search_grid);
