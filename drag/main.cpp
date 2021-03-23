@@ -79,10 +79,40 @@ std::tuple<double,double,double,int,std::pair<double,double>> try_tstar_drag(
     phase_t z0;
     z0 << 0.0, y_star, v0*std::cos(theta), v0*std::sin(theta);
     auto result = explicit_midpoint(rhs_with_drag, z0, tstar_search_grid.back(), tstar_search_grid.size());
-    auto y_drag = result.col(1);
-    auto x_drag = result.col(0);
+    phase_t y_drag = result.col(1);
+    phase_t x_drag = result.col(0);
+    int ierr=false;
+    unsigned t_star_index = 0
+    std::pair<double,double> t_star_bracket;
+    if(y_drag(0)<0.0){
+    	ierr = -1;
+    	t_star_index = 0;
+    	t_star_bracket.first = 0;
+    	t_star_bracket.second = 0;
+    }
+    if(y_drag(end)>0.0){
+    	ierr = 1;
+    	t_star_index = y_drag.size()-1;
+    	t_star_bracket.first = 0;
+    	t_star_bracket.second = 0;
+    }
+    else{
+    	ierr = 0;
+    	for(std::size_t i=0; i<y_drag.size()-1;i++){
+    		if(y_drag[i+1]*y_drag[i]<=0.0){
+    			t_star_bracket.first = t_grid[i];
+    			t_star_bracket.second = t_grid[i+1];
+    			if (std::abs(y_drag[i+1])<std::abs(y_drag[i])){
+    				t_star_index = i+1;
+    			}
+    			else{
+    				t_star_index = i
+    			}
+    		}
+    	}
+    }
     
-    return std::tuple<double,double,double,int,std::pair<double,double>>(0);
+    return std::make_tuple(t_grid[t_star_index], x_drag[t_star_index], y_drag[t_star_index], ierr, t_star_bracket);
 }
 
 std::tuple<double,double,double,bool> calc_x_star_with_drag_at_tstar(
@@ -98,11 +128,42 @@ std::tuple<double,double,double,bool> calc_x_star_with_drag_at_tstar(
     bool success = false;
     double const t_star_est_lower=t_star_est*rel_range_lower;
     double const t_star_est_upper=t_star_est*rel_range_upper;
+    // Space to save results
+    int ierr=false;
+    unsigned t_star_index = 0
+    std::pair<double,double> t_star_bracket;
+    phase_t y_drag;
+    phase_t x_drag;
+    double t_star_est;
     for(std::size_t try_=0; try_<num_try; try_++){
         auto t_star_search_grid=linspace(t_star_est_lower,t_star_est_upper,number_of_t_searches);
         auto tmp = try_tstar_drag(v0,theta,y_star,t_star_search_grid);
+        t_star_est = std::get<0>(tmp);
+        x_drag = std::get<1>(tmp);
+        y_drag = std::get<2>(tmp);
+        ierr = std::get<3>(tmp);
+        t_star_bracket = std::get<4>(tmp);
+
+        if(ierr==-1){
+        	t_star_est_upper=t_star_est_lower;
+        	t_star_est_lower=t_star_est_lower*rel_range_lower;
+        }
+        if(ierr==1){
+        	t_star_est_lower=t_star_est_upper;
+        	t_star_est_upper=t_star_est_upper*rel_range_upper;
+        }
+        else{
+        	if(std::abs(y_drag)<eps_y){
+        		success=true;
+        		break;
+        	}
+        	else{
+        		t_star_est_lower=t_star_bracket.first;
+        		t_star_est_upper=t_star_bracket.second;
+        	}
+        }
     } 
-    return std::tuple<double,double,bool,int>(0,0,0,0);
+    return std::make_tuple(t_star_est, x_drag, y_drag, success);
 }
 
 std::tuple<double,double,bool,int> find_v0(double const & x_star, 
@@ -119,7 +180,7 @@ std::tuple<double,double,bool,int> find_v0(double const & x_star,
     for(std::size_t try_=0; try_<number_of_tries; try_++){
         auto tmp = calc_x_star_with_drag_at_tstar(v0_est, theta, y_star, t_star_est);
     }
-    return std::tuple<double,double,bool,int>(0,0,0,0);
+    return std::make_tuple(0,0,0,0);
 }
 
 int main(){
