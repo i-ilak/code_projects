@@ -62,7 +62,7 @@ std::pair<double,double> calc_tstar_ref_and_x_ref_at_tstar_ref(double const & v0
 phase_t rhs_with_drag(double const & t, phase_t const & z){
     phase_t rhs(4);                                 // space for the rhs
     rhs.head(2) = z.tail(2);                        // fill velocities in first 2 elements of rhs
-    phase_t tmp;
+    phase_t tmp(2);
     double const v_norm = std::sqrt(z(2)*z(2)+z(3)*z(3));
     tmp << -constants::lam*z(2)*v_norm, -constants::lam*z(3)*v_norm-constants::grav_const;
     rhs.tail(2) = tmp;
@@ -81,8 +81,7 @@ std::tuple<double,double,double,int,std::pair<double,double>> try_tstar_drag(
     z0(1)=y_star;
     z0(2)=v0*std::cos(theta);
     z0(3)=v0*std::sin(theta);
-    std::cout << "got to here" <<"\n";
-    auto result = explicit_midpoint(rhs_with_drag, z0, tstar_search_grid.back(), tstar_search_grid.size());
+    Eigen::MatrixXd result = explicit_midpoint(rhs_with_drag, z0, tstar_search_grid.back(), tstar_search_grid.size());
     phase_t y_drag = result.col(1);
     phase_t x_drag = result.col(0);
     int ierr=false;
