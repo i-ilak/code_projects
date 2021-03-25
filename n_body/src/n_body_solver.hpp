@@ -102,7 +102,7 @@ phase_t nbody_rhs(phase_t const & z, std::vector<double> const& masses,
 
 // These two variables need to be defined as static so that we can write out
 // the rhs in a form that is compatible with the integration methods written 
-// in integreate.hpp, i.e. they need to be of the form 
+// in integrate.hpp, i.e. they need to be of the form 
 //  Eigen::VectorXd rhs(double const & t, phase_t const & z0).
 // For the solution to this problem see reduced_rhs in n_body_solver.
 static double G;
