@@ -2,7 +2,7 @@
 We simulate the classical n-body problem, i.e. how do n massive object evolve in time, given some initial state, when the only acting force on them is gravity. This is a standard exercise for a Numerical Methods class and some interesting initial condtions can be found in `setup.pdf`. 
 
 ### Goals of this project:
- - test `boost/odeint`, professional ODE solver. For this, implement some simple ODE solvers (Explicit Euler, Explicit Midpoint, Velocity Verlet) using the `eigen`-library, and compare it to them.
+ - get familiar with `boost/odeint`, professional ODE solver. For this, implement some simple ODE solvers (Explicit Euler, Explicit Midpoint, Velocity Verlet) using the `eigen`-library, and compare it to them.
  - test out Python's animation library. Seems interesting to visualize data that evolves in time. 
 
 ### Currently working on:
