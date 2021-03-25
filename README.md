@@ -1,6 +1,6 @@
 # code_projects
 
-This is repo to collect some  of the small projects I did over the last couple of months. Most of them are a particular solution to a physics problem that is either well known or popped up during my daily life. 
+This is a repo to collect some  of the small projects I did over the last couple of months. Most of them are a particular solution to a physics problem that is either well known or popped up during my daily life. In all cases there was a particular tool that I wanted to test out or learn more about and I feel like a small project is ideal for this.
 
 Currently we have:
  - **Butter Problem**: does a toast fall on the butter side or not? A simulation written in the Wolfram Language (Mathematica) to determine if a piece of bread will land on the butter side or not. The final result is a a graph, tabel-height vs. initial-bread-speed, showing in which cases we have a good start into the day.
