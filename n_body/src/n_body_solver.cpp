@@ -1,13 +1,14 @@
 #include "n_body_solver.hpp"
 
 using mass_t = double;
+using mass_container_t = std::vector<mass_t>;
 using vector_t = Eigen::Vector3d;
 using phase_t = Eigen::VectorXd;    // type used for elements of "phase space"
 using planet_container_type = std::vector<StellarObject>;
 
 
 /*
- * Note that the following solution is based entierly on the approach
+ * Note that the following solution is based entirely on the approach
  * of pushing each ODE into the form dz=f(t,z), where z is an element
  * of phase-space, i.e. has the form:
  * z = [r_(1,x), r_(1,y), r_(1,z), r_(2,x), .... r_(N,z), 
@@ -46,7 +47,7 @@ double norm(vector_t const& v){
  *  - returns the force acting on object k. Note that the force is a vector, 
  *    i.e. direction and amplitude.
  */
-vector_t force_on_object_k(vector_t const & qk, std::vector<double> const& masses, 
+vector_t force_on_object_k(vector_t const & qk, mass_container_t const& masses, 
                            phase_t const & positions, short const & N, short const & k){
     vector_t force;
     force.fill(0);
@@ -76,7 +77,7 @@ vector_t force_on_object_k(vector_t const & qk, std::vector<double> const& masse
  *  - Returns ddz
  */
 phase_t nbody_prod(phase_t const & z0,
-                   std::vector<double> const& masses, 
+                   mass_container_t const& masses, 
                    double const & G){
     short const N = masses.size();
     phase_t positions(3*N);                     //space for positions of the particles
@@ -84,7 +85,7 @@ phase_t nbody_prod(phase_t const & z0,
     phase_t ddz(3*N);                           //space for the rhs of the ODE
     ddz.fill(0);                                
     for(std::size_t k = 0; k<N; ++k){
-        ddz.segment(3*k,3) = G * force_on_object_k(positions.segment(3*k,3), masses ,positions, N, k);
+        ddz.segment(3*k,3) = G * force_on_object_k(positions.segment(3*k,3), masses, positions, N, k);
     }
     return ddz;
 }
@@ -93,7 +94,7 @@ phase_t nbody_prod(phase_t const & z0,
 /*
  * Function that puts everything together to create rhs of the n-body problem.
  */
-phase_t nbody_rhs(phase_t const & z, std::vector<double> const& masses,
+phase_t nbody_rhs(phase_t const & z, mass_container_t const& masses,
                   double const G){
     int const N = masses.size();
     phase_t rhs(6*N);                               // space for the rhs
@@ -126,7 +127,7 @@ Eigen::MatrixXd n_body_solver(planet_container_type const & planets,
                               double const & T, int const & bins,
                               double const & gravitational_constant,
                               int const & method){
-    std::vector<double> masses;
+    mass_container_t masses;
     int const N = planets.size();
     phase_t z0(6*N);
     for(std::size_t k=0; k < N; ++k) {

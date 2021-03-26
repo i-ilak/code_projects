@@ -13,7 +13,7 @@ using planet_container_t = std::vector<StellarObject>;
 
 
 /*
- * Note that the following solution is based entierly on the approach
+ * Note that the following solution is based entirely on the approach
  * of pushing each ODE into the form dz=f(t,z), where z is an element
  * of phase-space, i.e. has the form:
  * z = [r_(1,x), r_(1,y), r_(1,z), r_(2,x), .... r_(N,z), 

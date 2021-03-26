@@ -21,7 +21,7 @@ void perform_simulation(planet_container_type const & objects,
     auto res = n_body_solver(objects, T, N, G, method);
     auto end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> diff = end - start;
-    std::cout << name.substr(1,name.size()-1) + " calculation took:\t" << diff.count() << " s" <<"\n";
+    std::cout << name.substr(1,name.size()-1) + " calculation took:\t\t" << diff.count() << " s" <<"\n";
 
     // Writing the data into a file for later plotting
     std::string path= "data/data" + name + ".txt";
