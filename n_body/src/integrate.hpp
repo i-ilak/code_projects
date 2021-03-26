@@ -2,29 +2,15 @@
 #define INTEGRATE_HPP
 
 #include <string>
-#include <eigen3/Eigen/Dense>
 #include <utility>
 #include <iostream>
 #include <cmath>
 #include <fstream>
 
-/*
- Define some useful types. All the names are related to physical quantities and
- should be interpreted in this context. 
- */
-using mass_t = double const;
-using name_t = std::string const;
-using vector_t = Eigen::Vector3d;
+#include <eigen3/Eigen/Dense>
+
 using phase_t = Eigen::VectorXd;    // type used for elements of "phase space"
 
-// The following is in relation to how ODE's are defined. If we are given the
-// most general form of an ODE, z' = f(t,z), where t is a constant (usually
-// called time) and z an element of the phase space, then rhs_t is the type of
-// f. 
-using rhs_t = phase_t (*)(double const &, phase_t const &);
-template <class S>
-using step_t = phase_t (*)(S, phase_t const &, double, double);
-using integration_t = Eigen::MatrixXd (*)(rhs_t , phase_t const &, double const &, unsigned const &);
 
 /*
  * The following are two, well-known solution schemes for ODE's. For both the

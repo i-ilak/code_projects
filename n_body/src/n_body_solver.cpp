@@ -1,15 +1,9 @@
-#ifndef N_BODY_HPP
-#define N_BODY_HPP
-
-#include <vector>
-#include "stelar_object.hpp"
-#include "integrate.hpp"
+#include "n_body_solver.hpp"
 
 using mass_t = double;
-using mass_container_t = std::vector<mass_t>;
 using vector_t = Eigen::Vector3d;
 using phase_t = Eigen::VectorXd;    // type used for elements of "phase space"
-using planet_container_t = std::vector<StellarObject>;
+using planet_container_type = std::vector<StellarObject>;
 
 
 /*
@@ -29,9 +23,13 @@ using planet_container_t = std::vector<StellarObject>;
  * write a separate function for this. 
  */
 // The outer functor we want to apply later.
-double square(double x);
+double square(double x){  
+    return std::pow(x,2);
+}
 // The actual function, using the previously defined functor. 
-double norm(vector_t const& v);
+double norm(vector_t const& v){
+    return std::sqrt(v.unaryExpr(&square).sum());
+}
 
 
 /*
@@ -48,8 +46,19 @@ double norm(vector_t const& v);
  *  - returns the force acting on object k. Note that the force is a vector, 
  *    i.e. direction and amplitude.
  */
-vector_t force_on_object_k(vector_t const & qk, mass_container_t const& masses, 
-                           phase_t const & positions, short const & N, short const & k);
+vector_t force_on_object_k(vector_t const & qk, std::vector<double> const& masses, 
+                           phase_t const & positions, short const & N, short const & k){
+    vector_t force;
+    force.fill(0);
+    for(std::size_t i=0; i < N; ++i){
+        if(i!=k){
+            vector_t diff = positions.segment(3*i,3)-qk;
+            double normq = std::pow(norm(diff),3);
+            force += masses[i]/normq * diff;
+        }
+    }
+    return force;
+};
 
 /*
  * The rhs of the n-body problem involves only one complicated part,
@@ -66,22 +75,32 @@ vector_t force_on_object_k(vector_t const & qk, mass_container_t const& masses,
  * POST:
  *  - Returns ddz
  */
-phase_t nbody_prod(phase_t const & z0, mass_container_t const& masses, double const & G);
+phase_t nbody_prod(phase_t const & z0,
+                   std::vector<double> const& masses, 
+                   double const & G){
+    short const N = masses.size();
+    phase_t positions(3*N);                     //space for positions of the particles
+    positions << z0.head(3*N);                  //fill it with the relevant elements from z
+    phase_t ddz(3*N);                           //space for the rhs of the ODE
+    ddz.fill(0);                                
+    for(std::size_t k = 0; k<N; ++k){
+        ddz.segment(3*k,3) = G * force_on_object_k(positions.segment(3*k,3), masses ,positions, N, k);
+    }
+    return ddz;
+}
 
 
 /*
  * Function that puts everything together to create rhs of the n-body problem.
  */
-phase_t nbody_rhs(phase_t const & z, mass_container_t const& masses, double const G);
-
-struct nbody_rhs_helper{
-    const mass_container_t masses_;
-    const double grav_const_;
-    nbody_rhs_helper(mass_container_t const & masses, double const G) : masses_(masses), grav_const_(G) {}
-    phase_t operator()(double const & t, phase_t const & z){
-        return nbody_rhs(z, masses_, grav_const_); 
-    }
-};
+phase_t nbody_rhs(phase_t const & z, std::vector<double> const& masses,
+                  double const G){
+    int const N = masses.size();
+    phase_t rhs(6*N);                               // space for the rhs
+    rhs.head(3*N) = z.tail(3*N);                    // fill velocities in first 3*N elements of rhs
+    rhs.tail(3*N) = nbody_prod(z, masses, G);       // fill last 3*N elements with nbody_prod
+    return rhs;
+}
 
 /*
  * PRE:
@@ -103,9 +122,34 @@ struct nbody_rhs_helper{
  *  - Eigen::MatrixXd, where row k contains the phase space coordinates at time k*T/N,
  *    of all the planets. Elements of 3*u to 3*u+6 are the coordinates of u-th object. 
  */
-Eigen::MatrixXd n_body_solver(planet_container_t const & planets, 
+Eigen::MatrixXd n_body_solver(planet_container_type const & planets, 
                               double const & T, int const & bins,
                               double const & gravitational_constant,
-                              int const & method);
-
-#endif //N_BODY_HPP
+                              int const & method){
+    std::vector<double> masses;
+    int const N = planets.size();
+    phase_t z0(6*N);
+    for(std::size_t k=0; k < N; ++k) {
+        z0.segment(3*k,3) = planets[k].get_position();
+    }
+    for(std::size_t k=N; k < 2*N; ++k) {
+        z0.segment(3*k,3) = planets[k%N].get_velocity();
+    }
+    for(auto & planet : planets){
+        masses.push_back(planet.get_mass());
+    }
+    nbody_rhs_helper rhs = nbody_rhs_helper(masses, gravitational_constant);
+    switch (method)
+    {
+    default:
+        return explicit_euler(rhs, z0, T, bins);
+        break;
+    case 2:
+        return explicit_midpoint(rhs, z0, T, bins);
+        break;
+    case 3:
+        return velocity_verlet(rhs, z0, T, bins);
+        break;
+    }
+    
+}

@@ -1,15 +1,13 @@
 #ifndef STELLAR_OBJECT_HPP
 #define STELLAR_OBJECT_HPP
 
-#include "integrate.hpp"
+#include <string>
+#include <eigen3/Eigen/Dense>
 
-// Class representing a stellar object
-/*
- * The masses are taken relative to the Sun, 
- * distances are in A.U. (astronomical  units),
- * time in Earth days and 
- * the gravitational constant is G = 2.95912208286e-4.
- */
+using mass_t = double;
+using name_t = std::string const;
+using vector_t = Eigen::Vector3d;
+
 class StellarObject{
     public:
         explicit StellarObject( vector_t pos,vector_t speed,

@@ -2,8 +2,11 @@
 #define PARAMETERS_HPP
 
 #include <vector>
-#include <stelar_object.hpp>
+#include "stelar_object.hpp"
 
+using mass_t = double;
+using vector_t = Eigen::Vector3d;
+using planet_container_type = std::vector<StellarObject>;
 
 /*
  * All the parameters of the different n-Body simulations are collected here.
@@ -14,7 +17,7 @@
 /*
  * Set up instances for a simple 2-body simulation.
  */
-std::vector<StellarObject> two_body(){
+planet_container_type two_body(){
     vector_t r0 = vector_t(2,0,0);
     vector_t v0 = vector_t(0, std::sqrt(500/2), 0);
 
@@ -25,7 +28,7 @@ std::vector<StellarObject> two_body(){
     StellarObject Sun(qSun, vSun, mSun, "Sun");
     StellarObject Earth(r0, v0, 1, "Earth");
 
-    std::vector<StellarObject> planets = {Sun, Earth};
+    planet_container_type planets = {Sun, Earth};
     return planets;
 }
 
@@ -33,7 +36,7 @@ std::vector<StellarObject> two_body(){
  * Three body simulation with some special initial conditions
  * resulting in a nice trajectory.
  */
-std::vector<StellarObject> three_body_special(){
+planet_container_type three_body_special(){
     vector_t q1 = vector_t(0.97000436, -0.24308753, 0);
     vector_t v1 = vector_t(0.46620368, 0.43236573, 0);
     vector_t q2 = vector_t(-0.97000436, 0.24308753, 0);
@@ -45,7 +48,7 @@ std::vector<StellarObject> three_body_special(){
     StellarObject Earth2(q2, v2, 1, "Earth");
     StellarObject Earth3(q3, v3, 1, "Earth");
 
-    std::vector<StellarObject> planets = {Earth1, Earth2, Earth3};
+    planet_container_type planets = {Earth1, Earth2, Earth3};
     return planets;
 }
 
@@ -55,7 +58,7 @@ std::vector<StellarObject> three_body_special(){
  * The masses are taken relative to the Sun, distances are in A.U. (astronomical  units),
  * time in Earth days and the gravitational constant is G = 2.95912208286e-4.
  */
-std::vector<StellarObject> solar_system(){
+planet_container_type solar_system(){
     mass_t mSun = 1.00000597682;
     vector_t qSun = vector_t(0,0,0);
     vector_t vSun = vector_t(0,0,0);
@@ -87,9 +90,8 @@ std::vector<StellarObject> solar_system(){
     StellarObject Neptun(qn,vn, mn, "Neptun");
     StellarObject Pluto(qp,vp, mp, "Pluto");
 
-    std::vector<StellarObject> planets = {Sun, Jupiter, Saturn, Uranus, Neptun, Pluto};
+    planet_container_type planets = {Sun, Jupiter, Saturn, Uranus, Neptun, Pluto};
     return planets;
 }
-
 
 #endif 
