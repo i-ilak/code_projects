@@ -11,7 +11,9 @@ int main(){
     int const N = 40000;
     double const T = 200000;
     
-    // Do simulation using naive integrators (Velocity Verlet)
+    // Do simulation using naive integrators
+    perform_simulation(objects, T, N, G, 1);
+    perform_simulation(objects, T, N, G, 2);
     perform_simulation(objects, T, N, G, 3);
 
     // Do simulation using ODE int

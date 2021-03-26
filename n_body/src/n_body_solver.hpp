@@ -100,13 +100,21 @@ phase_t nbody_rhs(phase_t const & z, std::vector<double> const& masses,
     return rhs;
 }
 
+struct nbody_rhs_helper{
+    const std::vector<double> masses_;
+    const double grav_const_;
+    nbody_rhs_helper(std::vector<double> const & masses, double const G) : masses_(masses), grav_const_(G) {}
+    phase_t operator()(double const & t, phase_t const & z){
+        return nbody_rhs(z, masses_, grav_const_); 
+    }
+};
+
 // These two variables need to be defined as static so that we can write out
 // the rhs in a form that is compatible with the integration methods written 
 // in integrate.hpp, i.e. they need to be of the form 
 //  Eigen::VectorXd rhs(double const & t, phase_t const & z0).
 // For the solution to this problem see reduced_rhs in n_body_solver.
-static double G;
-static std::vector<double> masses;
+
 
 /*
  * PRE:
@@ -132,6 +140,7 @@ Eigen::MatrixXd n_body_solver(std::vector<StellarObject> const & planets,
                               double const & T, int const & bins,
                               double const & gravitational_constant,
                               int const & method){
+    std::vector<double> masses;
     int const N = planets.size();
     phase_t z0(6*N);
     for(std::size_t k=0; k < N; ++k) {
@@ -143,22 +152,20 @@ Eigen::MatrixXd n_body_solver(std::vector<StellarObject> const & planets,
     for(auto & planet : planets){
         masses.push_back(planet.get_mass());
     }
-    G = gravitational_constant;
-    auto reduced_rhs = [](double const & t, phase_t const & z0) {return nbody_rhs(z0, masses, G);};
-    integration_t solver;
+    nbody_rhs_helper rhs = nbody_rhs_helper(masses, gravitational_constant);
     switch (method)
     {
-    case 1:
-        solver = explicit_euler;
+    default:
+        return explicit_euler(rhs, z0, T, bins);
         break;
     case 2:
-        solver = explicit_midpoint;
+        return explicit_midpoint(rhs, z0, T, bins);
         break;
     case 3:
-        solver = velocity_verlet;
+        return velocity_verlet(rhs, z0, T, bins);
         break;
     }
-    return solver(reduced_rhs, z0, T, bins);
+    
 }
 
 #endif //N_BODY_HPP
