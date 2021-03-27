@@ -15,31 +15,15 @@ def make_plot(axis, data_file_name):
     hf = h5py.File("./data/" + data_file_name, "r")
     # Names of the planets and keys to access the different datasets
     names = list(hf.keys())
-    names = names[:-1] 
-    # Number of planets
-    N = len(names)
-    # make sure the rest of the data is interpreted as type float
-    file = np.array(file[2:], dtype=float)
-
-    # We then reshape the file to get into the form we are used,
-    # see n_body_solver.hpp the function n_body_solver POST.
-    file = file.reshape((int(len(file)/(6*N+1)), (6*N+1)))
-
+    names = [x for x in hf.keys() if x!="Time"]
     # separate time data from spatial data
-    time = file[:,-1]
+    time = np.array(hf.get("Time"), dtype=float)
 
     # Get the spatial data of each stellar object and save it into a list
     planets = []
 
-    for k in range(N):
-        planet = []
-        x = file[:, 3*k]
-        y = file[:, 3*k+1]
-        z = file[:, 3*k+2]
-        planet.append(x)
-        planet.append(y)
-        planet.append(z)
-        planets.append(planet)
+    for name in names:
+        planets.append(np.array(hf.get(name), dtype=float).transpose())
     planets = np.array(planets)
 
     # Setting title and other cosmetic parameters for plot
@@ -64,8 +48,13 @@ def make_plot(axis, data_file_name):
     axis.grid(which='minor', color='#CCCCCC', linestyle=':')
 
     # Set the initial positions of all the planets from which the animation starts
-    lines2d = [axis.plot(planet[0,:-1], planet[1,:-1], planet[2,:-1], 
-                linestyle="dashdot", label=name)[0] for planet, name in zip(planets,names)]
+    lines2d = [
+        axis.plot(  planet[0,:-1], 
+                    planet[1,:-1], 
+                    planet[2,:-1], 
+                    linestyle="dashdot", 
+                    label=name)[0] 
+        for planet, name in zip(planets,names)]
 
     return lines2d, planets, time
 

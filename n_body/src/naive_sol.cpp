@@ -37,6 +37,7 @@ void perform_simulation(planet_container_type const & objects,
 
         int k, j;
         double data_arr[NX][NY];            // buffer for data to write
+        // Note that data_arr is on the stack, i.e. we don't need to clean it up at the end!
         for (j = 0; j < NX; j++)
         {
             for (k = 0; k < NY; k++)
