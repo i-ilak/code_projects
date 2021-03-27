@@ -4,18 +4,20 @@ from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.animation
 from matplotlib.ticker import (AutoMinorLocator, MultipleLocator)
 import matplotlib.gridspec as gridspec
+import h5py
 
 # Set font to monospace since animation looks better this way
 plt.rcParams.update({"font.family": "monospace"})
 
 
 def make_plot(axis, data_file_name):
-    # We want to plot the generated data form data_ee.txt and data_em.txt.
-    file = np.array(open("./data/" + data_file_name).read().split())
-    # the first line only contains the number of stellar objects that we simulated.
-    N = int(file[0])
-    # Second line contains names of stellar objects, if they have useful names.
-    names = file[1].split(",")
+    # We want to plot the generated data
+    hf = h5py.File("./data/" + data_file_name, "r")
+    # Names of the planets and keys to access the different datasets
+    names = list(hf.keys())
+    names = names[:-1] 
+    # Number of planets
+    N = len(names)
     # make sure the rest of the data is interpreted as type float
     file = np.array(file[2:], dtype=float)
 
@@ -81,9 +83,9 @@ if __name__ == "__main__":
     #   ee: Explicit Euler
     #   em: Explicit Midpoint
     #   vv: Velocity Verlet
-    line_ee, planets_ee, time_ee = make_plot(ax1, "data_ee.txt")
-    line_em, planets_em, time_em = make_plot(ax2, "data_em.txt")
-    line_vv, planets_vv, time_vv = make_plot(ax3, "data_vv.txt")
+    line_ee, planets_ee, time_ee = make_plot(ax1, "naive_ee.hdf5")
+    line_em, planets_em, time_em = make_plot(ax2, "naive_em.hdf5")
+    line_vv, planets_vv, time_vv = make_plot(ax3, "naive_vv.hdf5")
 
     # A line in this context is the data that we hand pythons animation function later
     lines = [line_ee, line_em, line_vv]
