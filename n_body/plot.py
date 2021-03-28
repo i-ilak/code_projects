@@ -27,13 +27,15 @@ def make_plot(axis, data_file_name):
     planets = np.array(planets)
 
     # Setting title and other cosmetic parameters for plot
-    if data_file_name[-6:-4]=="ee":
+    if data_file_name[-7:-5]=="ee":
         axis.set_title("Explicit Euler")
-    elif data_file_name[-6:-4]=="vv":
+    elif data_file_name[-7:-5]=="vv":
         axis.set_title("Velocity Verlet")
-    else:
+    elif data_file_name[-7:-5]=="em":
         axis.set_title("Explicit Midpoint")
-
+    else:
+        axis.set_title("ODE Int")
+    """
     # Change major ticks to show every 20.
     axis.xaxis.set_major_locator(MultipleLocator(20))
     axis.yaxis.set_major_locator(MultipleLocator(20))
@@ -46,7 +48,7 @@ def make_plot(axis, data_file_name):
     # differently.
     axis.grid(which='major', color='#CCCCCC', linestyle='--')
     axis.grid(which='minor', color='#CCCCCC', linestyle=':')
-
+    """
     # Set the initial positions of all the planets from which the animation starts
     lines2d = [
         axis.plot(  planet[0,:-1], 
@@ -58,14 +60,16 @@ def make_plot(axis, data_file_name):
 
     return lines2d, planets, time
 
+
 if __name__ == "__main__":
     # Set up environment for plot
     fig = plt.figure()
     gs = gridspec.GridSpec(2, 4)
     gs.update(wspace=0.5)
-    ax1 = fig.add_subplot(gs[0, :2], projection='3d')
-    ax2 = fig.add_subplot(gs[0, 2:], projection='3d')
-    ax3 = fig.add_subplot(gs[1, 1:3], projection='3d')
+    ax1 = fig.add_subplot(2,2,1, projection='3d')
+    ax2 = fig.add_subplot(2,2,2, projection='3d')
+    ax3 = fig.add_subplot(2,2,3, projection='3d')
+    ax4 = fig.add_subplot(2,2,4, projection='3d')
 
     # Get data for plot. Note that the subscript stands for the different 
     # integration schemes:
@@ -75,11 +79,12 @@ if __name__ == "__main__":
     line_ee, planets_ee, time_ee = make_plot(ax1, "naive_ee.hdf5")
     line_em, planets_em, time_em = make_plot(ax2, "naive_em.hdf5")
     line_vv, planets_vv, time_vv = make_plot(ax3, "naive_vv.hdf5")
+    line_od, planets_od, time_od = make_plot(ax4, "ode_int.hdf5")
 
     # A line in this context is the data that we hand pythons animation function later
-    lines = [line_ee, line_em, line_vv]
-    spatial_data_container_list = [planets_ee, planets_em, planets_vv]
-    time_container = [time_ee, time_em, time_vv]
+    lines = [line_ee, line_em, line_vv, line_od]
+    spatial_data_container_list = [planets_ee, planets_em, planets_vv, planets_od]
+    time_container = [time_ee, time_em, time_vv, time_od]
 
     def update_curves(num):
         num *=500
@@ -95,7 +100,7 @@ if __name__ == "__main__":
         return lines,
 
     ani = matplotlib.animation.FuncAnimation(fig, update_curves, frames=3000, interval=60, blit=False, save_count=200)
-    for axis in [ax1, ax2, ax3]:
+    for axis in [ax1, ax2, ax3, ax4]:
         axis.view_init(elev=20, azim=100)
         axis.dist=10
         axis.set_xlim(axis.get_xlim())

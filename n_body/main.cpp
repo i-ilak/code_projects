@@ -19,6 +19,6 @@ int main(){
     perform_simulation(objects, T, N, G, 3);
 
     // Do simulation using ODE int
-    perform_ode_int_simulation(objects, T, N, G);
+    perform_ode_int_simulation(objects, T, N);
 
 }

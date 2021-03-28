@@ -59,7 +59,7 @@ void perform_simulation(planet_container_type const & objects,
 
         dataset.write( data_arr, H5::PredType::NATIVE_DOUBLE );
     }
-    // Need to write time individually 
+    // Need to write time separately
     const H5std_string  DATASET_NAME( "Time" );
     double time_arr[NX];
     for (int j = 0; j < NX; j++){
