@@ -15,7 +15,7 @@ def make_plot(axis, data_file_name):
     hf = h5py.File("./data/" + data_file_name, "r")
     # Names of the planets and keys to access the different datasets
     names = list(hf.keys())
-    names = [x for x in hf.keys() if x!="Time"]
+    names = [x for x in hf.keys() if x!="Time" if x!="Pluto"]
     # separate time data from spatial data
     time = np.array(hf.get("Time"), dtype=float)
 
