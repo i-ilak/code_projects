@@ -14,6 +14,8 @@
 // We also modify the streaming_observer slightly to be able to write the data to a 
 // HDF5 document in the end.
 
+#include <H5Cpp.h>
+
 #include <iostream>
 #include <boost/array.hpp>
 
@@ -21,11 +23,9 @@
 
 #include "point_type.hpp"
 
-#include <H5Cpp.h>
-
 //[ container_type_definition
 // we simulate 5 planets and the sun
-const size_t n = 6;
+const size_t n = 3;
 
 typedef point< double , 3 > point_type;
 typedef boost::array< point_type , n > container_type;
@@ -101,24 +101,6 @@ point_type center_of_mass( const container_type &x , const mass_type &m )
     if( !x.empty() ) mean /= overall_mass;
     return mean;
 }
-
-
-double energy( const container_type &q , const container_type &p , const mass_type &masses )
-{
-    const size_t n = q.size();
-    double en = 0.0;
-    for( size_t i=0 ; i<n ; ++i )
-    {
-        en += 0.5 * norm( p[i] ) / masses[i];
-        for( size_t j=0 ; j<i ; ++j )
-        {
-            double diff = abs( q[i] - q[j] );
-            en -= gravitational_constant * masses[j] * masses[i] / diff;
-        }
-    }
-    return en;
-}
-//]
 
 //[ streaming_observer
 struct streaming_observer

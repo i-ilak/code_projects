@@ -19,13 +19,12 @@ using planet_container_type = std::vector<StellarObject>;
  */
 planet_container_type two_body(){
     vector_t r0 = vector_t(2,0,0);
-    vector_t v0 = vector_t(0, std::sqrt(500/2), 0);
+    vector_t v0 = vector_t(0, std::abs(std::sqrt(500/2)), 0);
 
-    mass_t mSun = 1.00000597682;
-    vector_t qSun = vector_t(0,0,0);
-    vector_t vSun = vector_t(0,0,0);
+    vector_t q1 = vector_t(0,0,0);
+    vector_t v1 = vector_t(0,0,0);
 
-    StellarObject Sun(qSun, vSun, mSun, "Sun");
+    StellarObject Sun(q1, v1, 500, "Sun");
     StellarObject Earth(r0, v0, 1, "Earth");
 
     planet_container_type planets = {Sun, Earth};
@@ -44,9 +43,9 @@ planet_container_type three_body_special(){
     vector_t q3 = vector_t(0, 0, 0);
     vector_t v3 = vector_t(-0.93240737, -0.86473146, 0);
 
-    StellarObject Earth1(q1, v1, 1, "Earth");
-    StellarObject Earth2(q2, v2, 1, "Earth");
-    StellarObject Earth3(q3, v3, 1, "Earth");
+    StellarObject Earth1(q1, v1, 1, "Obj. 1");
+    StellarObject Earth2(q2, v2, 1, "Obj. 2");
+    StellarObject Earth3(q3, v3, 1, "Obj. 3");
 
     planet_container_type planets = {Earth1, Earth2, Earth3};
     return planets;
@@ -79,16 +78,16 @@ planet_container_type solar_system(){
     vector_t qn = vector_t (11.4707666, -25.7294829, -10.8169456);
     vector_t vn = vector_t (0.00288930, 0.00114527, 0.00039677);
 
-    mass_t mp = 7.692307692307693e-09;
+    mass_t mp = 1.0 / ( 1.3e8 );
     vector_t qp = vector_t (-15.5387357, -25.2225594, -3.1902382);
     vector_t vp = vector_t (0.00276725, -0.00170702, -0.00136504);
 
-    StellarObject Sun(qSun,vSun,mSun, "Sun");
-    StellarObject Jupiter(qj,vj, mj, "Jupiter");
-    StellarObject Saturn(qs,vs, ms, "Saturn");
-    StellarObject Uranus(qu,vu, mu, "Uranus");
-    StellarObject Neptun(qn,vn, mn, "Neptun");
-    StellarObject Pluto(qp,vp, mp, "Pluto");
+    StellarObject Sun(qSun  , vSun,mSun, "Sun");
+    StellarObject Jupiter(qj, vj,    mj, "Jupiter");
+    StellarObject Saturn( qs, vs,    ms, "Saturn");
+    StellarObject Uranus( qu, vu,    mu, "Uranus");
+    StellarObject Neptun( qn, vn,    mn, "Neptun");
+    StellarObject Pluto(  qp, vp,    mp, "Pluto");
 
     planet_container_type planets = {Sun, Jupiter, Saturn, Uranus, Neptun, Pluto};
     return planets;

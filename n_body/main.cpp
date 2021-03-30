@@ -8,7 +8,7 @@ int main(){
     // Generate vector of StellarObjects to simulate time evolution
     // and set up all the other parameters, where T is the simulated time 
     // interval and N the number of time-steps we will take in the simulation.
-    planet_container_type objects = solar_system();
+    planet_container_type objects = two_body();
     double const G = 2.95912208286e-4;
     int const N = 40000;
     double const T = 200000;

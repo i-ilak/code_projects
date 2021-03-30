@@ -43,7 +43,7 @@ void perform_simulation(planet_container_type const & objects,
             for (k = 0; k < NY; k++)
                 data_arr[j][k] = res(j,3*i+k);
         }
-        
+  
         hsize_t dimsf[2];                   // dataset dimensions
         dimsf[0] = NX;
         dimsf[1] = NY;
@@ -56,7 +56,6 @@ void perform_simulation(planet_container_type const & objects,
         datatype.setOrder( H5T_ORDER_LE );
 
         H5::DataSet dataset = file.createDataSet( DATASET_NAME, datatype, dataspace );
-
         dataset.write( data_arr, H5::PredType::NATIVE_DOUBLE );
     }
     // Need to write time separately
