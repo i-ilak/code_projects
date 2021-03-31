@@ -15,6 +15,7 @@
 // HDF5 document in the end.
 
 #include <H5Cpp.h>
+#include <omp.h>
 
 #include <iostream>
 #include <boost/array.hpp>

@@ -6,6 +6,7 @@
 #include <iostream>
 #include <cmath>
 #include <fstream>
+#include <omp.h>
 
 #include <eigen3/Eigen/Dense>
 
@@ -65,6 +66,7 @@ Eigen::MatrixXd integrate(STEP step, RHS rhs, phase_t const & z0,
         z.row(i + 1) = step(rhs, z.row(i), t0 + i * dt, dt);
     }
     phase_t t(bins+1);
+    #pragma omp parallel for 
     for(std::size_t k = 0; k<t.size(); ++k){
         t(k) = (k+1) * dt;
     }

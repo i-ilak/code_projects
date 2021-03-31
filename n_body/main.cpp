@@ -22,13 +22,16 @@ int main(){
     
     // Time simulation
     auto start = std::chrono::high_resolution_clock::now();
-    // Do simulation using naive integrators
+    // Do simulation in parallel for all integrators
     #pragma omp parallel for
-    for (int i =0; i<3;i++){
-        perform_simulation(objects, T, N, G, i+1);
+    for (int i =0; i<=3;i++){
+        if(i==3){
+            perform_ode_int_simulation(objects, T, N);
+        }
+        else{
+            perform_simulation(objects, T, N, G, i+1);
+        }
     }
-    // Do simulation using ODE int
-    perform_ode_int_simulation(objects, T, N);
     auto end = std::chrono::high_resolution_clock::now();
 
     std::chrono::duration<double> diff = end - start;

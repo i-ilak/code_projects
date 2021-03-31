@@ -1,4 +1,5 @@
 #include "n_body_solver.hpp"
+#include <omp.h>
 
 using mass_t = double;
 using mass_container_t = std::vector<mass_t>;
@@ -51,6 +52,7 @@ vector_t force_on_object_k(vector_t const & qk, mass_container_t const& masses,
                            phase_t const & positions, short const & N, short const & k){
     vector_t force;
     force.fill(0);
+    #pragma omp parallel for
     for(std::size_t i=0; i < N; ++i){
         if(i!=k){
             vector_t diff = positions.segment(3*i,3)-qk;
@@ -83,7 +85,8 @@ phase_t nbody_prod(phase_t const & z0,
     phase_t positions(3*N);                     //space for positions of the particles
     positions << z0.head(3*N);                  //fill it with the relevant elements from z
     phase_t ddz(3*N);                           //space for the rhs of the ODE
-    ddz.fill(0);                                
+    ddz.fill(0);
+    #pragma omp parallel for                                
     for(std::size_t k = 0; k<N; ++k){
         ddz.segment(3*k,3) = G * force_on_object_k(positions.segment(3*k,3), masses, positions, N, k);
     }
@@ -130,9 +133,11 @@ Eigen::MatrixXd n_body_solver(planet_container_type const & planets,
     mass_container_t masses;
     int const N = planets.size();
     phase_t z0(6*N);
+    #pragma omp parallel for 
     for(std::size_t k=0; k < N; ++k) {
         z0.segment(3*k,3) = planets[k].get_position();
     }
+    #pragma omp parallel for 
     for(std::size_t k=N; k < 2*N; ++k) {
         z0.segment(3*k,3) = planets[k%N].get_velocity();
     }
