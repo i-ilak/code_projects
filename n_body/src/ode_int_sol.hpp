@@ -25,7 +25,7 @@
 
 //[ container_type_definition
 // we simulate 5 planets and the sun
-const size_t n = 3;
+const size_t n = 6;
 
 typedef point< double , 3 > point_type;
 typedef boost::array< point_type , n > container_type;
