@@ -1,6 +1,6 @@
-#include "parameters_simulation.hpp"
-#include "naive_sol.hpp"
-#include "ode_int_sol.hpp"
+#include "include/parameters_simulation.hpp"
+#include "include/naive_sol.hpp"
+#include "include/ode_int_sol.hpp"
 #include <omp.h>
 
 using planet_container_type = std::vector<StellarObject>;
