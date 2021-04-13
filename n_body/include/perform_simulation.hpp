@@ -25,10 +25,26 @@ const double gravitational_constant = 2.95912208286e-4;
 
 using planet_container_type = std::vector<StellarObject>;
 
-void perform_simulation(planet_container_type const & ,
-                        double const & , int const & , double const & ,
-                        int const &);
+/* Wrapper function that thakes an initial distribution of planets in objects and performs a 
+ * simulation for some time T in N steps with gravitational constant G. 
+ * PRE:
+ *  - objects:  contains a vector of StellarObject-type
+ *  - T:        for which time-span should the simulation run
+ *  - N:        how many steps are made
+ *  - G:        values of the gravitational constants (specifies unit system)
+ *  - k:        integer that specifies integration method
+ *                  1.  Explicit Euler
+ *                  2.  Explicit Midpoint
+ *                  3.  Velocity Verlet
+ * 
+ * POST:
+ *  Creates a .hfd5 file with the data of the simulation
+ */
+void perform_simulation(planet_container_type const & objects,
+                        double const & T, int const & N, 
+                        double const & G, int const & k);
 
+// Same as above, we just don't need to specify the method here. 
 void perform_ode_int_simulation(planet_container_type const & objects,
                         double const & T, int const & N);
 
