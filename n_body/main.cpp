@@ -1,12 +1,11 @@
 #include "include/parameters_simulation.hpp"
-#include "include/naive_sol.hpp"
-#include "include/ode_int_sol.hpp"
+#include "include/perform_simulation.hpp"
 #include <omp.h>
 
 using planet_container_type = std::vector<StellarObject>;
 
 int main(){
-    // We want to run sum of the code in parallel, so we set the number of available processors.
+    // We want to run some of the code in parallel, so we set the number of available processors.
     int nProcessors = omp_get_max_threads();
 
     std::cout<<"Number of available processors:\t" << nProcessors<<std::endl;

@@ -1,4 +1,4 @@
-#include "naive_sol.hpp"
+#include "perform_simulation.hpp"
 #include <H5Cpp.h>
 
 void perform_simulation(planet_container_type const & objects,

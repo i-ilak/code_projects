@@ -40,7 +40,7 @@ def make_plot(axis, data_file_name):
         #    print(np.array(hf.get(name), dtype=float).transpose().shape)
     planets = np.array(planets)
 
-    """
+    
     # Change major ticks to show every 20.
     axis.xaxis.set_major_locator(MultipleLocator(20))
     axis.yaxis.set_major_locator(MultipleLocator(20))
@@ -53,7 +53,6 @@ def make_plot(axis, data_file_name):
     # differently.
     axis.grid(which='major', color='#CCCCCC', linestyle='--')
     axis.grid(which='minor', color='#CCCCCC', linestyle=':')
-    """
 
     # Set the initial positions of all the planets from which the animation starts
     lines2d = [
@@ -92,7 +91,7 @@ if __name__ == "__main__":
     spatial_data_container_list = [planets_ee, planets_em, planets_vv, planets_od]
 
     def update_curves(num):
-        num *=500
+        num*=10000
         for line, planets in zip(lines, spatial_data_container_list):
             if num > len(planets[0][0]):
                 # Freeze animation at last frame 
@@ -104,7 +103,7 @@ if __name__ == "__main__":
         fig.suptitle('September 5th, 1994 at 00:00h\n + {:3}y {:3}d'.format(int(time_ee[num]/365),int(time_ee[num]%365)), y=0.95)
         return lines,
 
-    ani = matplotlib.animation.FuncAnimation(fig, update_curves, frames=3000, interval=60, blit=False, save_count=200)
+    ani = matplotlib.animation.FuncAnimation(fig, update_curves, frames=spatial_data_container_list[0].shape[2], interval=60, blit=False, save_count=200)
     for axis in [ax1, ax2, ax3, ax4]:
         axis.view_init(elev=20, azim=100)
         axis.dist=10

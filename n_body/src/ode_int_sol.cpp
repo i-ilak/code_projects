@@ -1,4 +1,4 @@
-#include "ode_int_sol.hpp"
+#include "perform_simulation.hpp"
 #include <H5Cpp.h>
 
 // The following code is pretty much verbatim copied from 
@@ -17,10 +17,13 @@
 // We also modify the streaming_observer slightly to be able to write the data to a 
 // HDF5 document in the end.
 
+//[ container_type_definition
+
 typedef point< double , 3 > point_type;
 typedef boost::array< point_type , n > container_type;
 typedef boost::array< double , n > mass_type;
 //]
+
 
 // added container_type for planets
 using planet_container_type = std::vector<StellarObject>;
