@@ -126,7 +126,7 @@ void perform_ode_int_simulation(planet_container_type const & objects,
         masses[i] = objects[i].get_mass();
         for(std::size_t j=0; j<3; j++){
             q[i][j] = objects[i].get_position()[j];
-            p[i][j] = objects[i].get_velocity()[j] * masses[i];
+            p[i][j] = objects[i].get_velocity()[j];
         }
     }
 
@@ -137,6 +137,8 @@ void perform_ode_int_simulation(planet_container_type const & objects,
         q[i] -= qmean ;
         p[i] -= pmean;
     }
+
+    for(size_t i=0; i<objects.size(); ++i) p[i] *=masses[i];
 
     //[ integration_solar_system
     typedef symplectic_rkn_sb3a_mclachlan< container_type > stepper_type;

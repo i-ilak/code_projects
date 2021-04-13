@@ -26,7 +26,7 @@ def make_plot(axis, data_file_name):
         names = [x for x in hf.keys() if x!="Time"]
     else:
         axis.set_title("ODE Int")
-        names = [x for x in hf.keys() if x!="Time" if x!="Pluto"]
+        names = [x for x in hf.keys() if x!="Time"]
     
     # separate time data from spatial data
     time = np.array(hf.get("Time"), dtype=float)
