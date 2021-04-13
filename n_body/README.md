@@ -6,9 +6,8 @@ We simulate the classical n-body problem, i.e. how do n massive object evolve in
  - test out Python's animation library. Seems interesting to visualize data that evolves in time. 
  - learn how to use HDF5 in C++.
 
-### Currently working on:
- - `ode/int` solution of the problem. The solution for Pluto comes out completely wrong, while the rest works just fine.. Needs more investigation. 
- - Currently the example with the 6 planets works, but the other two examples compile, but give wrong results.. Need to depug this.
+### Currently working on: 
+ - Write some code to compare the error of the simple methods to the `odeint` version to see how better it is.
 
 ### Things that still need to be done:
  - Tests! Currently there are no tests for the implementation... The results of the simulation seem fine, but we should probably make some basic analysis of the precision and how well it handels what kind of problems. A reasonable reference would probably be an analytical solution or otherwise `ode/int`, which seems to be well tested.

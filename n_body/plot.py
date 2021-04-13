@@ -40,7 +40,7 @@ def make_plot(axis, data_file_name):
         #    print(np.array(hf.get(name), dtype=float).transpose().shape)
     planets = np.array(planets)
 
-    
+    """
     # Change major ticks to show every 20.
     axis.xaxis.set_major_locator(MultipleLocator(20))
     axis.yaxis.set_major_locator(MultipleLocator(20))
@@ -53,6 +53,7 @@ def make_plot(axis, data_file_name):
     # differently.
     axis.grid(which='major', color='#CCCCCC', linestyle='--')
     axis.grid(which='minor', color='#CCCCCC', linestyle=':')
+    """
 
     # Set the initial positions of all the planets from which the animation starts
     lines2d = [

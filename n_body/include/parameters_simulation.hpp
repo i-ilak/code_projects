@@ -9,49 +9,6 @@ using vector_t = Eigen::Vector3d;
 using planet_container_type = std::vector<StellarObject>;
 
 /*
- * All the parameters of the different n-Body simulations are collected here.
- * Each function returns a vector of StellarObjects that can then be passed
- * down to n_body_solver.
- */
-
-/*
- * Set up instances for a simple 2-body simulation.
- */
-planet_container_type two_body(){
-    vector_t r0 = vector_t(2,0,0);
-    vector_t v0 = vector_t(0, std::abs(std::sqrt(500/2)), 0);
-
-    vector_t q1 = vector_t(0,0,0);
-    vector_t v1 = vector_t(0,0,0);
-
-    StellarObject Sun(q1, v1, 500, "Sun");
-    StellarObject Earth(r0, v0, 1, "Earth");
-
-    planet_container_type planets = {Sun, Earth};
-    return planets;
-}
-
-/*
- * Three body simulation with some special initial conditions
- * resulting in a nice trajectory.
- */
-planet_container_type three_body_special(){
-    vector_t q1 = vector_t(0.97000436, -0.24308753, 0);
-    vector_t v1 = vector_t(0.46620368, 0.43236573, 0);
-    vector_t q2 = vector_t(-0.97000436, 0.24308753, 0);
-    vector_t v2 = vector_t(0.46620368, 0.43236573, 0);
-    vector_t q3 = vector_t(0, 0, 0);
-    vector_t v3 = vector_t(-0.93240737, -0.86473146, 0);
-
-    StellarObject Earth1(q1, v1, 1, "Obj. 1");
-    StellarObject Earth2(q2, v2, 1, "Obj. 2");
-    StellarObject Earth3(q3, v3, 1, "Obj. 3");
-
-    planet_container_type planets = {Earth1, Earth2, Earth3};
-    return planets;
-}
-
-/*
  * We simulate a part of the Solar system. The initial data is given down 
  * below and corresponds to September 5th, 1994 at 00:00h.
  * The masses are taken relative to the Sun, distances are in A.U. (astronomical  units),
